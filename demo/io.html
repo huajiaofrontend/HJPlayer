@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IO测试文件</title>
+</head>
+<body>
+    <p><button onclick="createIO()">createIO</button></p>
+
+    <p><button onclick="startLoad()" >startLoad</button></p>
+
+    <p><button onclick="stop()">stop</button></p>
+
+    <p><button onclick="resume()">resume</button></p>
+
+    <p><button onclick="destroy()">destroy</button></p>
+
+    <script type="text/javascript" src="app.min.js"></script>
+    <script>
+        const IOController = HJPlayer.IOController;
+        const defaultConfig = HJPlayer.HJPlayerDefaultConfig;
+
+        const Events = HJPlayer.Events;
+        let time = Date.now();
+
+        function createIO() {
+            const IO = new IOController({
+                type: 'm3u8',
+                url: 'http://qh1-hls.live.huajiao.com/live_huajiao_v2/_LC_QH1_non_19947618915723931261630292_SX/index.m3u8'
+            }, Object.assign(
+                {},
+                defaultConfig,
+                {
+                    enableWorker: true,
+                },
+            ), 0);
+
+            window.IO = IO;
+
+            IO.onDataArrival = function(data, byteStart, extraData){
+                console.log(data, byteStart, extraData);
+            };
+        }
+
+        function startLoad() {
+            IO.open();
+        } 
+
+        function stop() {
+            IO.pause();
+        }
+
+        function resume() {
+            IO.resume();
+        }
+
+        function destroy() {
+            IO.destroy();
+        }
+
+    </script>
+</body>
+</html>

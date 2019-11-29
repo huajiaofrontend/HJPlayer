@@ -1,0 +1,12 @@
+const WEBWORKER_CMD = {
+    INIT: 'INIT',
+    START: 'START',
+    STOP: 'STOP',
+    SEEK: 'SEEK',
+    PAUSE: 'PAUSE',
+    RESUME: 'RESUME',
+    DESTROY: 'DESTROY',
+    LOG_CONFIG_CHANGE: 'LOG_CONFIG_CHANGE'
+};
+
+export default WEBWORKER_CMD;

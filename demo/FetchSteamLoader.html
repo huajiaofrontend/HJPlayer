@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p><button onclick="createLoader()">createLoader</button></p>
+
+    <p><button onclick="startLoad()" >startLoad</button></p>
+
+    <p><button onclick="abort()">abort</button></p>
+
+    <p><button onclick="destroy()">destroy</button></p>
+    <script type="text/javascript" src="hjplayer.js"></script>
+    <script>
+
+        const FetchSteamLoader = HJPlayer.FetchSteamLoader;
+        const ParamSeekHandler = HJPlayer.ParamSeekHandler;
+        let time = Date.now();
+
+        function createLoader() {
+            const loader = new FetchSteamLoader(new ParamSeekHandler('bstart', 'bend'), {
+                reuseRedirectedURL: false
+            });
+            window.loader = loader;
+            loader.onDataArrival = (e1, e2, e3, e4) => {
+                let timex = (Date.now() - time) / 1000;
+                time = Date.now();
+                console.info(e1, e2, e3, e4);
+            }
+        }
+
+        function startLoad() {
+            console.log(loader);
+            loader.startLoad({
+                type: 'flv',
+                url: 'http://qh2-flv.live.huajiao.com/live_huajiao_v2/_LC_QH2_non_20669414715726022981967296_SX.flv'
+            }, { from: 0, to: -1 });
+        } 
+
+        function stop() {
+            loader.abort();
+        }
+
+        function destroy() {
+            loader.destroy();
+        }
+
+    </script>
+</body>
+</html>

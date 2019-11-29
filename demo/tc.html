@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TransmuxingController测试</title>
+</head>
+<body>
+    <div>
+        <select name="" id="select">
+            <option value="m3u8" selected>m3u8</option>
+            <option value="flv" >flv</option>
+        </select>
+        <input type="text" name="" id="url" style="width: 50%;">
+    </div>
+    <p><button onclick="start()">start load</button></p>
+    <p><button onclick="pause()">pause</button></p>
+    <p><button onclick="resume()">resume</button></p>
+    <p><button onclick="destroy()">destroy()</button></p>
+    <script type="text/javascript" src="hjplayer.js"></script>
+    <script>
+        let TC;
+        const oSelect = document.querySelector('#select');
+        const oInput = document.querySelector('#url');
+        const TransmuxingController = HJPlayer.TransmuxingController;
+        const HJPlayerDefaultConfig = HJPlayer.HJPlayerDefaultConfig;
+        const typeSupported = HJPlayer.typeSupported;
+        const Events = HJPlayer.Events;
+        const tempNavigator = {
+            vendor: window.navigator.vendor || '',
+            userAgent: window.navigator.userAgent
+        };
+        const mediaConfig = {
+            type: 'flv',
+            url: 'http://qh2-flv.live.huajiao.com/live_huajiao_v2/_LC_QH2_non_19445418515725845481598742_OX.flv'
+        }
+        const userConfig = Object.assign({}, HJPlayerDefaultConfig, {
+            enableWorker: false,
+            isLive: true,
+        });
+
+        window.onload = function(){
+            const localType = localStorage.getItem('playType');
+            const localSource = localStorage.getItem('source');
+            oSelect.value = localType;
+            oInput.value = localSource;
+        }
+
+        function start() {
+            const type = document.querySelector('#select').value;
+            const url = document.querySelector('#url').value;
+
+            if(!type || !url) return;
+
+            localStorage.setItem('playType', type);
+            localStorage.setItem('source', url);
+
+            mediaConfig.type = type;
+            mediaConfig.url = url;
+
+            TC && TC.destroy();
+
+            TC = new TransmuxingController(
+                mediaConfig,
+                userConfig,
+                typeSupported,
+                tempNavigator,
+            );
+
+            TC.on(Events.INIT_SEGMENT, (type, segment) => {
+                console.log('initSegment', type, segment);
+            });
+
+            TC.on(Events.MEDIA_SEGMENT, (type, segment) => {
+                console.log('mediaSegment', type, segment);
+            });
+
+            TC.on(Events.IO_ERROR, (data1, data2, data3) => {console.log(Events.IO_ERROR, data1, data2, data3)});
+            TC.on(Events.DEMUX_ERROR,  (data1, data2, data3) => {console.log(Events.DEMUX_ERROR, data1, data2, data3)});
+            TC.on(Events.LOADING_COMPLETE,  (data1, data2, data3) => {console.log(Events.LOADING_COMPLETE, data1, data2, data3)});
+            TC.on(Events.RECOVERED_EARLY_EOF,  (data1, data2, data3) => {console.log(Events.RECOVERED_EARLY_EOF, data1, data2, data3)});
+            TC.on(Events.MEDIA_INFO,  (data1, data2, data3) => {console.log(Events.MEDIA_INFO, data1, data2, data3)});
+            TC.on(Events.METADATA_ARRIVED,  (data1, data2, data3) => {console.log(Events.METADATA_ARRIVED, data1, data2, data3)});
+            TC.on(Events.SCRIPTDATA_ARRIVED,  (data1, data2, data3) => {console.log(Events.SCRIPTDATA_ARRIVED, data1, data2, data3)});
+            TC.on(Events.STATISTICS_INFO,  (data1, data2, data3) => {console.log(Events.STATISTICS_INFO, data1, data2, data3)});
+            TC.on(Events.RECOMMEND_SEEKPOINT,  (data1, data2, data3) => {console.log(Events.RECOMMEND_SEEKPOINT, data1, data2, data3)});
+            TC.on(Events.GET_SEI_INFO,  (data1, data2, data3) => {console.log(Events.GET_SEI_INFO, data1, data2, data3)});
+            TC.on(Events.MANIFEST_PARSED,  (data1, data2, data3) => {console.log(Events.MANIFEST_PARSED, data1, data2, data3)});
+
+            TC.start();
+        }
+
+        function pause() {
+            TC && TC.pause();
+        }
+
+        function resume() {
+            TC && TC.resume();
+        }
+        
+        function destroy() {
+            TC && TC.destroy();
+            TC = null;
+        }
+
+    </script>
+</body>
+</html>
