@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        const player = new HJPlayer({
+            type: 'flv',
+            url: 'aaaaa'
+        }, {
+            ENABLE_CALLBACK: true,
+            ENABLE_DEBUG: true
+        });
+        
+        const Logger = HJPlayer.Logger;
+
+        Logger.on(HJPlayer.Events.HJ_PLAYER_LOG, (type, info) => {
+            console.log(new Date().toLocaleTimeString(), `: ${info}`);
+        })
+
+        Logger.error('error', '这是error的测试');
+        Logger.info('info', '这是info的测试');
+        Logger.log('log', '这是log的测试');
+        Logger.warn('warn', '这是warn的测试');
+        Logger.debug('debug', '这是debug的测试');
+        Logger.verbose('verbose', '这是verbose的测试');
+
+    </script>
+</body>
+</html>

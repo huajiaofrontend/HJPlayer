@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            text-align: center;
+            min-width: 880px;
+            font-size: 12px;
+        }
+
+        input {
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        button {
+            min-width: 120px;
+            padding: 0 6px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            border: 1px solid #ddd;
+            vertical-align: top;
+            border-radius: 3px;
+        }
+
+        .action p {
+            margin-bottom: 10px;
+        }
+
+        select {
+            border: 1px solid #ddd;
+            height: 30px;
+            vertical-align: top;
+        }
+
+        .selectItem {
+            margin: 5px 0;
+            float: left;
+            width: 50%;
+            text-align: left;
+        }
+
+        .selectItem label {
+            display: inline-block;
+            vertical-align: middle;
+            width: 200px;
+            padding-left: 10px;
+        }
+
+        .selectItem select {
+            margin-left: 5px;
+            width: 100px;
+            vertical-align: middle;
+        }
+
+        .selectItem input {
+            padding-left: 5px;
+        }
+    </style>
+    <script src="./js/vue.min.js"></script>
+</head>
+
+<body>
+    <video id="videoElement" style="width: 96%; margin: 0 auto;height: 400px;" muted controls></video>
+    <div id="app">
+        <div style="margin: 10px auto;">
+            <select name="type" id="type" style="width: 10%;" v-model="mediaType">
+                <option value="m3u8">m3u8</option>
+                <option value="flv">flv</option>
+            </select>
+            <input type="text" style="width: 70%; padding-left: 5px;" v-model="mediaUrl" id="sourceUrl"
+                v-on:keyup.enter="initPlayer" v-on:keyup="fillType">
+            <button style="width: 15%" id="button" v-on:click="initPlayer">播放</button>
+        </div>
+
+        <div style="width: 100%; height: 80%;">
+            <div class="left-part" style="float: left; width: 80%">
+                <div class="select-zone">
+                    <span class="selectItem">
+                        <label for="isLive">isLive: </label>
+                        <select name="isLive" id="isLive" v-model="params.isLive">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="enableWorker">enableWorker</label>
+                        <select name="enableWorker" id="enableWorker" v-model.boolean="params.enableWorker">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="statisticsInfoReportInterval">statisticsInfoReportInterval</label>
+                        <select name="statisticsInfoReportInterval" id="statisticsInfoReportInterval"
+                            v-model.number="params.statisticsInfoReportInterval">
+                            <option v-for="time in intervalTime" :value="time" :key="time">{{time}}</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="ENABLE_CALLBACK">ENABLE_CALLBACK</label>
+                        <select name="ENABLE_CALLBACK" id="ENABLE_CALLBACK" v-model="params.ENABLE_CALLBACK">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="FORCE_GLOBAL_TAG">FORCE_GLOBAL_TAG</label>
+                        <select name="FORCE_GLOBAL_TAG" id="FORCE_GLOBAL_TAG" v-model="params.FORCE_GLOBAL_TAG">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="GLOBAL_TAG">GLOBAL_TAG</label>
+                        <input type="text" placeholder="HJPLAYER" id="GLOBAL_TAG" v-model.trim="params.GLOBAL_TAG">
+                    </span>
+                    <span class="selectItem">
+                        <label for="ENABLE_ERROR">ENABLE_ERROR</label>
+                        <select name="ENABLE_ERROR" id="ENABLE_ERROR" v-model="params.ENABLE_ERROR">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="ENABLE_INFO">ENABLE_INFO</label>
+                        <select name="ENABLE_INFO" id="ENABLE_INFO" v-model="params.ENABLE_INFO">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="ENABLE_WARN">ENABLE_WARN</label>
+                        <select name="ENABLE_WARN" id="ENABLE_WARN" v-model="params.ENABLE_WARN">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="ENABLE_DEBUG">ENABLE_DEBUG</label>
+                        <select name="ENABLE_DEBUG" id="ENABLE_DEBUG" v-model="params.ENABLE_DEBUG">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="enableStashBuffer">enableStashBuffer</label>
+                        <select name="enableStashBuffer" id="enableStashBuffer" v-model="params.enableStashBuffer">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="stashInitialSize">stashInitialSize(单位: KB)</label>
+                        <input type="number" name="stashInitialSize" id="stashInitialSize" placeholder="384KB"
+                            v-model.number="params.stashInitialSize">
+                    </span>
+                    <span class="selectItem">
+                        <label for="lazyLoad">lazyLoad</label>
+                        <select name="lazyLoad" id="lazyLoad" v-model="params.lazyLoad">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                    <span class="selectItem">
+                        <label for="lazyLoadMaxDuration">lazyLoadMaxDuration</label>
+                        <input type="number" v-model.number="params.lazyLoadMaxDuration" placeholder="懒加载最大时长">
+                    </span>
+                    <span class="selectItem">
+                        <label for="lazyLoadRecoverDuration">lazyLoadRecoverDuration</label>
+                        <input type="number" v-model.number="params.lazyLoadRecoverDuration" placeholder="懒加载恢复时间">
+                    </span>
+                    <span class="selectItem">
+                        <label for="deferLoadAfterSourceOpen">deferLoadAfterSourceOpen</label>
+                        <select name="deferLoadAfterSourceOpen" id="deferLoadAfterSourceOpen"
+                            v-model="params.deferLoadAfterSourceOpen">
+                            <option :value="false">false</option>
+                            <option :value="true">true</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div style="float: right; width: 20%" class="action">
+                <p>选项区</p>
+                <p><button v-on:click="consoleType">consoleType</button></p>
+                <p><button v-on:click="buffered">buffered</button></p>
+                <p><button v-on:click="duration">duration</button></p>
+                <p><button v-on:click="volume">volume</button></p>
+                <p><button v-on:click="muted">muted</button></p>
+                <p><button v-on:click="currentTime">currentTime</button></p>
+                <p><button v-on:click="mediaInfo">mediaInfo</button></p>
+                <p><button v-on:click="statisticsInfo">statisticsInfo</button></p>
+            </div>
+        </div>
+    </div>
+    <script src="./js/index.js"></script>
+<script type="text/javascript" src="hjplayer.js"></script></body>
+
+</html>

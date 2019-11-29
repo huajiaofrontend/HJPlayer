@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" id="myFile">
+    <script>
+        const player = new HJPlayer({
+            type: 'flv',
+            url: 'aaaaa'
+        });
+
+        console.log(player);
+
+        const oFile = document.getElementById('myFile');
+        const MseCodec = HJPlayer.Codec.FLVCodec;
+
+        oFile.addEventListener('change', (e) => {
+            const file = document.getElementById("myFile").files[0];
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = function (e){
+                const buffer = e.target.result;
+                const oMseCodec = new MseCodec(buffer, {
+                    isLive: false
+                });
+
+                oMseCodec.on(HJPlayer.Events.INIT_SEGMENT, (data) => {
+                    console.log('INIT_SEGMENT', data);
+                })
+
+                oMseCodec.on(HJPlayer.Events.MEDIA_SEGMENT, (data) => {
+                    console.log('MEDIA_SEGMENT', data);
+                })
+
+                oMseCodec.appendData(buffer, 0);
+            }
+        });
+    </script>
+</body>
+</html>

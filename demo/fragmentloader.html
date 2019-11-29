@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        // const player = new HJPlayer({
+        //     type: 'flv',
+        //     url: 'aaaaa'
+        // });
+        // console.log(3333);
+
+        const FragmentLoader = HJPlayer.FragmentLoader;
+
+        const loader = new FragmentLoader({
+            type: 'm3u8',
+            url: 'http://qh2-hls.live.huajiao.com/live_huajiao_v2/_LC_QH2_non_h265_SD_18928545515716366891884988_OX/index.m3u8'
+        }, undefined);
+
+        let time = Date.now();
+
+        loader.onDataArrival = (e1, e2, e3, e4) => {
+            let timex = (Date.now() - time) / 1000;
+            time = Date.now();
+            console.info(timex, e4.fragCurrent.sn, e4.fragCurrent.relurl);
+        }
+
+    
+        loader.startLoad({
+            type: 'm3u8',
+            url: 'http://qh2-hls.live.huajiao.com/live_huajiao_v2/_LC_QH2_non_h265_SD_18928545515716366891884988_OX/index.m3u8'
+        })
+    </script>
+</body>
+</html>
