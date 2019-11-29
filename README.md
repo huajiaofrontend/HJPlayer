@@ -1,6 +1,6 @@
 # HJPlayer
 
-English | [中文](../docs/Readme_Chinese.md)
+English | [中文](docs/Readme_Chinese.md)
 
 This Library currently support play FLV steam video and HLS stream video(do not support decrypt) in browser environment;
 It relies on HTML5 video element and MediaSource Extensions BOM API. only with `H264` codec and `AAC` codec;
@@ -96,12 +96,12 @@ if (HJPlayer.isSupported()) {
 
 ## config
 
-[user config params](./docs/Config_English.md);
+[user config params](docs/Config_English.md);
 
 ## func
 
-[primary func](./docs/Func_English.md);
+[primary func](docs/Func_English.md);
 
 ## framework
 
-![How do HJPlayer works](./docs/HJ-PLAYER.png)
+![How do HJPlayer works](docs/HJ-PLAYER.png)
