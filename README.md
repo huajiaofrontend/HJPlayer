@@ -67,6 +67,9 @@ if (HJPlayer.isSupported()) {
     }, {
         ...user config
     });
+    player.attachMediaElement(videoElement);
+    player.load();
+    player.play();
 }
 ```
 HLS
@@ -80,6 +83,9 @@ if (HJPlayer.isSupported()) {
     }, {
         ...user config
     });
+    player.attachMediaElement(videoElement);
+    player.load();
+    player.play();
 }
 
 ```
