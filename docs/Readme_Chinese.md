@@ -92,6 +92,11 @@ if (HJPlayer.isSupported()) {
 
 [主要功能](./func.md);
 
-## 架构
+
+## Licence
+
+[Licence](./Licence.md);
+
+## 它是怎么工作的
 
 ![HJPlayer的框架](./HJ-PLAYER.png)

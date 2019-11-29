@@ -102,6 +102,11 @@ if (HJPlayer.isSupported()) {
 
 [primary func](docs/Func_English.md);
 
-## framework
+## Licence
+
+[Licence](docs/Licence.md)
+
+## How it works?
 
 ![How do HJPlayer works](docs/HJ-PLAYER.png)
+
