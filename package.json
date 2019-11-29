@@ -1,6 +1,6 @@
 {
   "name": "hjplayer",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "description": "hjplayer",
   "main": "./dist/hjplayer.js",
   "module": "./dist/hjplayer.js",
@@ -30,7 +30,7 @@
     "MSE"
   ],
   "author": "huajiao_frontend",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/lijingan/HJPlayer/issues"
   },
@@ -86,5 +86,8 @@
     "es6-promise": "^4.2.8",
     "url-toolkit": "^2.1.6",
     "webworkify-webpack": "^2.1.5"
+  },
+  "directories": {
+    "doc": "docs"
   }
 }
