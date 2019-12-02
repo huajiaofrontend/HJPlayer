@@ -1,4 +1,4 @@
-# 设置参数
+# config params
 
 When init the player, it needs `MediaConfig`(@required) and `userConfig`(@optional) params;
 

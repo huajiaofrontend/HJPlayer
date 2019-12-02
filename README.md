@@ -33,11 +33,9 @@ npm install hjplayer --save
 ## build
 
 ```shell
-
 npm install
 
 npm run build
-
 ```
 
 ## How to import
@@ -52,7 +50,7 @@ or import through script src;
 
 
 ```HTML
-<script src="./dist/hjplayer.min.js">
+<script src="./dist/hjplayer.js">
 ```
 
 ## Getting Started
@@ -92,21 +90,202 @@ if (HJPlayer.isSupported()) {
 
 ## demo
 
+
 [demo](http://activity.test.huajiao.com/web/share/banner/2019/testHJPlayer/index.html)
 
 ## config
 
-[user config params](docs/Config_English.md);
+When init the player, it needs `MediaConfig`(@required) and `userConfig`(@optional) params;
 
-## func
+### MediaConfig
 
-[primary func](docs/Func_English.md);
+| field              | type                  | Description                              |
+| ------------------ | --------------------- | ---------------------------------------- |
+| `type`             | `string`              | media type, 'flv' or 'mp4' or 'm3u8'|
+| `isLive?`          | `boolean`             | whether the media is a live stream |
+| `cors?`            | `boolean`             | Indicates whether to enable CORS for http fetching |
+| `withCredentials?` | `boolean`             | Indicates whether to do http fetching with cookies |
+| `hasAudio?`        | `boolean`             | Indicates whether the stream has audio track |
+| `hasVideo?`        | `boolean`             | Indicates whether the stream has video track |
+| `duration?`        | `number`              | Indicates total media duration, in milliseconds |
+| `filesize?`        | `number`              | Indicates total file size of media file, in bytes |
+| `url?`             | `string`              | Indicates media URL, can be starts with 'https(s)' or 'ws(s)' (WebSocket flv only) |
+| `segments?`        | `Array<MediaSegment>` | Optional field for multipart playback, see **MediaSegment** |
+
+## MediaSegment
+
+If segments field exists, transmuxer will treat this MediaDataSource as a multipart source.
+
+In multipart mode, duration filesize url field in MediaDataSource structure will be ignored.
+
+MediaSegment Object :
+
+| field       | type     | Description                              |
+| ----------- | -------- | ---------------------------------------- |
+| `duration`  | `number` | Required field, indicates segment duration in milliseconds |
+| `filesize?` | `number` | Optional field, indicates segment file size in bytes |
+| `url`       | `string` | Required field, indicates segment file URL |
+
+ `segments` demo
+
+```javascript
+{
+    type: 'flv',
+    // Required
+    "segments": [
+        {
+            "duration": 3333,  // in milliseconds
+            "filesize": 4444,  // in bytes
+            "url": "http://xxxx/segments-1.flv"
+        },
+        {
+            "duration": 5555,
+            "filesize": 6666,
+            "url": "http://xxxx/segments-2.flv"
+        },
+        {
+            "duration": 7777,
+            "filesize": 8888,
+            "url": "http://xxxx/segments-3.flv"
+        }
+        ...
+    ]
+}
+
+```
+
+### userConfig
+
+| field                            | type      | default                      | Description                            |
+| -------------------------------- | --------- | ---------------------------- | ---------------------------------------- |
+| `enableWorker?`                  | `boolean` | `false`                      | Enable separated thread for transmuxing (unstable for now) |
+| `enableStashBuffer?`             | `boolean` | `true`                       | Enable IO stash buffer. Set to false if you need realtime (minimal latency) for live stream playback, but may stalled if there's network jittering. |
+| `FORCE_GLOBAL_TAG?`              | `boolean` | `false`                      | enable to use global tag `HJPLAYER` when console |
+| `GLOBAL_TAG`                     | `string`  | `HJPLAYER`                   | default global tag |
+| `ENABLE_CALLBACK`                | `boolean` | `false`                      | enable logger callback |
+| `ENABLE_ERROR`                   | `boolean` | `true`                       | enable console.error |     
+| `ENABLE_INFO`                   | `boolean` | `false`                       | enable console.info | 
+| `ENABLE_WARN`                   | `boolean` | `false`                       | enable console.warn | 
+| `ENABLE_DEBUG`                   | `boolean` | `false`                      | enable console.debug |  
+| `stashInitialSize?`              | `number`  | `384KB`                      | Indicates IO stash buffer initial size. Default is 384KB. Indicate a suitable size can improve video load/seek time. |
+| `isLive?`                        | `boolean` | `false`                      | Same to isLive in MediaDataSource, ignored if has been set in MediaDataSource structure. `flv only`|
+| `lazyLoad?`                      | `boolean` | `true`                       | Abort the http connection if there's enough data for playback|
+| `lazyLoadMaxDuration?`           | `number`  | `3 * 60`                     | Indicates how many seconds of data to be kept for lazyLoad. |
+| `lazyLoadRecoverDuration?`       | `number`  | `30`                         | Indicates the lazyLoad recover time boundary in seconds. |
+| `deferLoadAfterSourceOpen?`      | `boolean` | `true`                       | Do load after MediaSource sourceopen event triggered. On Chrome, tabs which be opened in background may not trigger sourceopen event until switched to that tab. |
+| `autoCleanupSourceBuffer`        | `boolean` | `false`                      | Do auto cleanup for SourceBuffer         |
+| `autoCleanupMaxBackwardDuration` | `number`  | `3 * 60`                     | When backward buffer duration exceeded this value (in seconds), do auto cleanup for SourceBuffer |
+| `autoCleanupMinBackwardDuration` | `number`  | `2 * 60`                     | Indicates the duration in seconds to reserve for backward buffer when doing auto cleanup. |
+| `fixAudioTimestampGap`           | `boolean` | `true`                       | Fill silent audio frames to avoid a/v unsync when detect large audio timestamp gap. |
+| `accurateSeek?`                  | `boolean` | `false`                      | Accurate seek to any frame, not limited to video IDR frame, but may a bit slower. Available on `Chrome > 50`, `FireFox` and `Safari`. |
+| `seekType?`                      | `string`  | `'range'`                    | `'range'` use range request to seek, or `'param'` add params into url to indicate request range. |
+| `seekParamStart?`                | `string`  | `'bstart'`                   | Indicates seek start parameter name for `seekType = 'param'` |
+| `seekParamEnd?`                  | `string`  | `'bend'`                     | Indicates seek end parameter name for `seekType = 'param'` |
+| `rangeLoadZeroStart?`            | `boolean` | `false`                      | Send `Range: bytes=0-` for first time load if use Range seek |
+| `customSeekHandler?`             | `object`  | `undefined`                  | Indicates a custom seek handler          |
+| `reuseRedirectedURL?`            | `boolean` | `false`                      | Reuse 301/302 redirected url for subsequence request like seek, reconnect, etc. |
+| `referrerPolicy?`                | `string`  | `no-referrer-when-downgrade` | Indicates the [Referrer Policy][] when using FetchStreamLoader |
+| `headers?`                       | `object`  | `undefined`                  | Indicates additional headers that will be added to request |
+HLS config. |
+| `tsAutoLevelChoose?`             | `boolean` | `false`                      | when play hls. whether auto choose the suitable bitrate level |
+| `maxFragLookUpTolerance?`        | `float`   | `0.25`                       | This tolerance factor is used during fragment lookup. Instead of checking whether buffered.end is located within [start, end] range, frag lookup will be done by checking within [start-maxFragLookUpTolerance, end-maxFragLookUpTolerance] range. |
+| `defaultAudioCodec`              | `undefined`| `undefined`                 | If audio codec is not signaled in variant manifest, or if only a stream manifest is provided, libraty tries to guess audio codec by parsing audio sampling rate in ADTS header. If sampling rate is less or equal than 22050 Hz, then libraty assumes it is HE-AAC, otherwise it assumes it is AAC-LC. This could result in bad guess, leading to audio decode error, ending up in media error. It is possible to hint default audiocodec to libraty by configuring this value as below: |
+
+[Referrer Policy]: https://w3c.github.io/webappsec-referrer-policy/#referrer-policy
+
+## Player methods
+
+The info below is the methods and properties of Player, you can controll the player or get some useful info;
+
+### static methods
+
+|methods                        | result             | Description                         |
+|-------------------------------|--------------------|-------------------------------------|
+|HJPlayer.isSupported()         | boolean            | whether the browser support this lib|
+|HJPlayer.typeSupported()       | Object             | return the media type of browser support |
+|HJPlayer.HJPlayerDefaultConfig | Object             | the default config of player        |
+  
+### Instance methods
+
+|methods                       | result             | Description                         |
+|------------------------------|--------------------|-------------------------------------|
+| on()                         | void               | bind callback for player events      |
+| off()                        | void               | cancel bind callback for player events|
+| attachMediaElement()         | void               | bind media element                   |
+| detachMediaElement()         | void               | remove the link of the media element with SourceBuffer            |
+| load()                       | void               | load the media stream                |
+| unload()                     | void               | unload the media stream              |
+| play()                       | Promise<void>      | the player plays the video           |                            
+| pause()                      | void               | the player pauses                    |
+
+### Instance property
+
+|property                      | result             | Description                         |
+|------------------------------|--------------------|-------------------------------------|
+| type                         | string             | player type: 'MSEPlayer' or 'NativePlayer'|
+| buffered                     | TimeRanges         | the TimeRanges of the player |
+| duration                     | number             | the duration of the media element    |
+| volume                       | number             | the volume of the video            |
+| currentTime                  | currentTime        | the currentTime of the video       |
+| muted                        | boolean            | whether the video is muted         |
+| mediaInfo                    | Object             | the meida info (metadata)          |
+| statisticsInfo               | Object             | the statistics info of player stauts, such as dropframe, speed etc; |   
+
+### HJPlayer.Events
+
+`HJPlayer.Events`, you can use the way `Player.on(HJPlayer.Events.xxx, fn)` to get the info of player when play,  `Player.off(HJPlayer.Events.xxx)` cancel listener
+
+| Event               | Description                              |
+| ------------------- | ---------------------------------------- |
+| ERROR               | An error occurred by any cause during the playback |
+| LOADING_COMPLETE    | The input MediaDataSource has been completely buffered to end |
+| RECOVERED_EARLY_EOF | An unexpected network EOF occurred during buffering but automatically recovered |
+| MEDIA_INFO          | Provides technical information of the media like video/audio codec, bitrate, etc. |
+| METADATA_ARRIVED    | Provides metadata which FLV file(stream) can contain with an "onMetaData" marker.  |
+| SCRIPTDATA_ARRIVED  | Provides scriptdata (OnCuePoint / OnTextData) which FLV file(stream) can contain. |
+| STATISTICS_INFO     | Provides playback statistics information like dropped frames, current speed, etc. |
+| GET_SEI_INFO        | it will returns the SEI info(Uint8Array) . |
+| HJ_PLAYER_LOG       | it will returns a log contains a type: string and a info: string |
+| MANIFEST_PARSED     | you can get the details of index.m3u8: Object |
+
+
+### HJPlayer.ErrorTypes
+
+when player is playing, it maybe happen something unexpected, you can use `player.on(HJPlayer.Events.ERROR, () => {})` to get what happend, 
+HJPlayer.ErrorTypes.xxx is the error type; you will also get a Object contain `reason`, it will tell you more details
+
+| Error         | Description                              |
+| ------------- | ---------------------------------------- |
+| NETWORK_ERROR | Errors related to the network            |
+| MEDIA_ERROR   | Errors related to the media (format error, decode issue, etc) |
+| OTHER_ERROR   | Any other unspecified error              | 
+
+
+### HJPlayer.ErrorDetails
+
+ prefix with `HJPlayer.ErrorDetails`: HJPlayer.ErrorDetails.xxxx
+
+| Error                           | Description                              |
+| ------------------------------- | ---------------------------------------- |
+| NETWORK_EXCEPTION               | Related to any other issues with the network; contains a `message` |
+| NETWORK_STATUS_CODE_INVALID     | Related to an invalid HTTP status code, such as 403, 404, etc. |
+| NETWORK_TIMEOUT                 | Related to timeout request issues        |
+| NETWORK_UNRECOVERABLE_EARLY_EOF | Related to unexpected network EOF which cannot be recovered |
+| MEDIA_MSE_ERROR                 | Related to MediaSource's error such as decode issue |
+| MEDIA_FORMAT_ERROR              | Related to any invalid parameters in the media stream |
+| MEDIA_FORMAT_UNSUPPORTED        | The input MediaDataSource format is not supported by flv.js |
+| MEDIA_CODEC_UNSUPPORTED         | The media stream contains video/audio codec which is not supported |
 
 ## Licence
 
-[Licence](docs/Licence.md)
+HJPlayer.js is released under [Apache 2.0 License](docs/Licence.md)
+
+
+## super class
+
+This player is extended [flv.js](https://github.com/bilibili/flv.js) and [hls.js](https://github.com/video-dev/hls.js)
 
 ## How it works?
 
-![How do HJPlayer works](docs/HJ-PLAYER.png)
+![How does HJPlayer works](docs/HJ-PLAYER.png)
 
