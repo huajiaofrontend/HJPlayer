@@ -267,7 +267,7 @@ HJPlayer.ErrorTypes.xxx is the error type; you will also get a Object contain `r
 
 | Error                           | Description                              |
 | ------------------------------- | ---------------------------------------- |
-| NETWORK_EXCEPTION               | Related to any other issues with the network; contains a `message` |
+| NETWORK_EXCEPTION               | Related to any other issues with the network; contains a `reason` |
 | NETWORK_STATUS_CODE_INVALID     | Related to an invalid HTTP status code, such as 403, 404, etc. |
 | NETWORK_TIMEOUT                 | Related to timeout request issues        |
 | NETWORK_UNRECOVERABLE_EARLY_EOF | Related to unexpected network EOF which cannot be recovered |
