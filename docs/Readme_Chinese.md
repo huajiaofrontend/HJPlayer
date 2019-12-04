@@ -6,7 +6,7 @@
 
 ## 为什么做这个?
 
-本项目开发目的出发点是要解决综艺项目和PC官网播放页需要同时支持FLV直播流和HLS回放流的问题, 一个`javascript`文件中同时集合2个库, 而其中的功能又重合, 所以尝试对这2个库进行合并, 进过一番学习后尝试采用`flv.js`为基础, 加入`hls.js`中的解析文档功能, 加载功能, 解码和转码功能, 响应`flvjs`的各种功能控制, 使之能在播放`FLV`流的基础上正常播放`HLS`直播流和点播流, 文件体积较两者之和小了很多, 但实现了相似的功能,  在此感谢 [flv.js](https://github.com/bilibili/flv.js) 和 [hls.js](https://github.com/video-dev/hls.js);
+本项目开发目的出发点是要解决综艺项目和PC官网播放页需要同时支持FLV直播流和HLS回放流的问题, 一个`javascript`文件中同时集合2个库, 而其中的功能又重合, 所以尝试对这2个库进行合并, 进过一番学习后尝试采用`flv.js`为基础, 加入`hls.js`中的解析文档功能, 加载功能, 解码和转码功能, 响应`flvjs`的各种功能控制, 使之能在播放`FLV`流的基础上正常播放`HLS`直播流和点播流, 文件体积较两者之和小了很多, 当然, 代码并不完美, 仍旧有许多需要修改和优化的地方, 但实现了相似的功能,  在此感谢 [flv.js](https://github.com/bilibili/flv.js) 和 [hls.js](https://github.com/video-dev/hls.js); 
 
 ## 播放器工作原理
 
@@ -20,10 +20,8 @@ HJPlayer的工作原理是将FLV文件流和HLS的TS文件流经过解码和转�
 
 ## Installation
 
-暂时放在私有库中, 待以后修改
-
 ```shell
-npm install --save git+https://git.huajiao.com/lijiancheng-hj/new-hj-player.git
+npm install hjplayer --save
 ```
 
 ## 打包
@@ -86,16 +84,21 @@ if (HJPlayer.isSupported()) {
 
 ## 设置参数
 
-[设置参数](./config.md);
+[设置参数](config.md);
 
 ## func
 
-[主要功能](./func.md);
+[主要功能](func.md);
 
 
 ## Licence
 
-[Licence](./Licence.md);
+[Licence](Licence.md);
+
+
+## 继承
+
+此播放器整合自 [flv.js](https://github.com/bilibili/flv.js) and [hls.js](https://github.com/video-dev/hls.js);
 
 ## 它是怎么工作的
 
