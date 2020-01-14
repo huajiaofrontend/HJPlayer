@@ -480,11 +480,13 @@ class TSDemuxer {
         // 如果过不连续或者变更了level 则重新生成初始化segment
         if(discontinuity || trackSwitch) {
             this.resetInitSegment(initSegment, audioCodec, videoCodec, duration);
+            this.remuxer.resetInitSegment();
         }
 
         // 如果过不连续 重置 时间基础值
         if(discontinuity) {
-            this.resetTimeStamp();
+            this.resetTimeStamp(defaultInitPTS);
+            this.remuxer.resetTimeStamp(defaultInitPTS);
         }
 
         this.append(new Uint8Array(data), timeOffset, contiguous, accurateTimeOffset);
@@ -657,7 +659,7 @@ class TSDemuxer {
     /**
      * 重置时间基准值
      */
-    resetTimeStamp() {}
+    resetTimeStamp(defaultInitPTS: number | undefined) {}
 
     /**
      * 重置媒体信息

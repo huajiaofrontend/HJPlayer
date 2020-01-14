@@ -115,7 +115,7 @@ class MP4Remuxer {
         delete this.agentInfo;
     }
 
-    resetTimeStamp(defaultTimeStamp: number) {
+    resetTimeStamp(defaultTimeStamp: number | undefined) {
         this._initDTS = defaultTimeStamp;
         this._initPTS = defaultTimeStamp;
     }

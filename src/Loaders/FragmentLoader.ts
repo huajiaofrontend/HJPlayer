@@ -130,9 +130,7 @@ class FragmentLoader extends BaseLoader {
     }
 
     destroy() {
-        if(this.isWorking) {
-            this.abort();
-        }
+        this.abort();
         this.pl && this.pl.abort();
         this.pl = null;
         this.currentFrag = null;
@@ -311,8 +309,8 @@ class FragmentLoader extends BaseLoader {
         }
 
         const DoseTheFragIsDownLoading = this.status === LoaderStatus.kConnecting
-        && milliseconds >= (frag.start - tolerance) * 1000
-        && milliseconds <= (frag.start + frag.duration + tolerance) * 1000;
+        && milliseconds >= (frag.start + tolerance) * 1000
+        && milliseconds <= (frag.start + frag.duration - tolerance) * 1000;
 
         if(!DoseTheFragIsDownLoading) {
             this.loader.abort();
@@ -421,7 +419,7 @@ class FragmentLoader extends BaseLoader {
                     (frag as any).bitrateTest = false;
                 }
                 // time Offset is accurate if level PTS is known, or if playlist is not sliding (not live) and if media is not seeking (this is to overcome potential timestamp drifts between playlists and fragments)
-                let accurateTimeOffset;
+                let accurateTimeOffset = false;
                 const initSegmentData = details.initSegment ? details.initSegment.data : [];
                 const audioCodec = this._getAudioCodec(currentLevel);
 

@@ -111,7 +111,7 @@ class TSCodec implements CodecInterface {
      * 重置时间基准值
      */
     resetTimeStamp(data?: any) {
-        this._demuxer.resetTimeStamp();
+        this._demuxer.resetTimeStamp(data);
     }
 
     /**

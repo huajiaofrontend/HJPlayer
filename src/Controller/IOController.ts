@@ -725,6 +725,11 @@ class IOController {
             }
         }
 
+        if(this._mediaConfig.type === 'm3u8') {
+            this._dispatchChunks(chunk, this._stashByteStart, this._tsExtraData);
+            return;
+        }
+
         if(!this._enableStash) {
             // disable stash
             if(this._stashUsed === 0) {
