@@ -249,7 +249,7 @@ declare class TSDemuxer {
     /**
      * 重置时间基准值
      */
-    resetTimeStamp(): void;
+    resetTimeStamp(defaultInitPTS: number | undefined): void;
     /**
      * 重置媒体信息
      */

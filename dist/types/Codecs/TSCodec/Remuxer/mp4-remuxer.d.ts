@@ -47,7 +47,7 @@ declare class MP4Remuxer {
     constructor(emitter: EventEmitter, config: any, typeSupported: typeSupported, agentInfo: agentInfo);
     static Tag: 'MP4Remuxer';
     destroy(): void;
-    resetTimeStamp(defaultTimeStamp: number): void;
+    resetTimeStamp(defaultTimeStamp: number | undefined): void;
     resetInitSegment(): void;
     remux(audioTrack: TSAudioTrack, videoTrack: TSVideoTrack, id3Track: TSId3Track, textTrack: TSTextTrack, timeOffset: number, contiguous: boolean, accurateTimeOffset: boolean): void;
     generateIS(audioTrack: TSAudioTrack, videoTrack: TSVideoTrack, timeOffset: number): void;
