@@ -427,7 +427,7 @@ class TransmuxingController {
 
         probeData = null;
 
-        Logger.error(this.Tag, 'Non-FLV or Non-TS, Unsupported media type!');
+        Logger.error(this.Tag, `Unsupported media type, this ${this._mediaDataSource.type} stream is not standard format`);
 
         Promise.resolve().then(() => {
             this._internalAbort();
@@ -436,7 +436,7 @@ class TransmuxingController {
         this._emitter.emit(
             Events.DEMUX_ERROR,
             Errors.FORMAT_UNSUPPORTED,
-            'Non-FLV or Non-TS, Unsupported media type'
+            `Unsupported media type, this ${this._mediaDataSource.type} stream is not standard format!`
         );
         consumed = 0;
         return consumed;
@@ -613,8 +613,8 @@ class TransmuxingController {
             return;
         }
 
-        this._mediaCodec.on(Events.ERROR, (type: string, info: ErrorData) => {
-            this._onDemuxException(type, info);
+        this._mediaCodec.on(Events.ERROR, (info: ErrorData) => {
+            this._onDemuxException(Errors.TRANSMUXING_ERROR, info);
         });
 
         this._mediaCodec.on(Events.MEDIA_INFO, (mediaInfo: MediaInfo) => {
