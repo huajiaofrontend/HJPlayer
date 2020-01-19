@@ -1,6 +1,6 @@
 {
   "name": "hjplayer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "hjplayer, a HTML5 Player, can play flv and hls by Media Source Extension, based on typescript;",
   "main": "./dist/hjplayer.js",
   "module": "./dist/hjplayer.js",
