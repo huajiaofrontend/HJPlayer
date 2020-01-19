@@ -235,6 +235,7 @@ class FragmentLoader extends BaseLoader {
         if(this.sn === 'initSegment') {
             // 第一个TS文件时initSegment
             frag = this.stashFrag[1];
+            if(!frag) return;
             this.loadFrag(frag);
         } else {
             for(let i = 0; i < this.stashFrag.length; i++) {
@@ -243,6 +244,7 @@ class FragmentLoader extends BaseLoader {
                     break;
                 }
             }
+            if(!frag) return;
             if(this.sn < frag.sn) {
                 this.loadFrag(frag);
             }
@@ -364,7 +366,7 @@ class FragmentLoader extends BaseLoader {
 
         // 多码率播放, 在config中设置tsAutoLevelChoose为true时, 需先用低码率的playlist下载TS, 测试网速, 再去采用适合网速的playlist
         // 单码率直接使用levels[0];
-        if(data.levels.length > 1) {
+        if(data.type === 'masterPlaylist' && data.levels.length > 0) {
             if(this._config.tsAutoLevelChoose) {
                 this.bitrateTest = true;
             }
@@ -374,13 +376,20 @@ class FragmentLoader extends BaseLoader {
             this.pl.dataSource = tempSource;
             this.pl.url = data.levels[0].url;
             this.pl.load();
-        } else {
+        } else if(data.type === 'levelPlaylist') {
             // 单码率播放列表, 可直接下载ts文件
             this.levels = data.levels;
             this.stashFrag = data.levels[0].details.fragments;
             this.startFragRequested = false;
             this.loadNextFrag();
             this.eventEmitter.emit(LoaderEvent.MANIFEST_PARSED, data.levels[0]);
+        } else {
+            const err = { code: -1, reason: 'can not find useful playlist' };
+            if(this._onError) {
+                this._onError(LoaderEvent.LOADING_ERROR, err);
+            } else {
+                throw new RuntimeException(err.reason);
+            }
         }
     }
 
@@ -419,7 +428,7 @@ class FragmentLoader extends BaseLoader {
                     (frag as any).bitrateTest = false;
                 }
                 // time Offset is accurate if level PTS is known, or if playlist is not sliding (not live) and if media is not seeking (this is to overcome potential timestamp drifts between playlists and fragments)
-                let accurateTimeOffset = false;
+                const accurateTimeOffset = false;
                 const initSegmentData = details.initSegment ? details.initSegment.data : [];
                 const audioCodec = this._getAudioCodec(currentLevel);
 

@@ -212,6 +212,7 @@ export default class PlaylistLoader {
             };
 
             this._emitter.emit(LoaderEvent.MANIFEST_PARSED, {
+                type: 'levelPlaylist',
                 levels: [singleLevel],
                 audioTracks: [],
                 url,
@@ -245,7 +246,6 @@ export default class PlaylistLoader {
         const string: string = response.data as string;
 
         const url: string = this._getResponseUrl(response, context);
-
         const levels: SingleLevels[] = M3U8Parser.parseMasterPlaylist(string, url);
         if(!levels.length) {
             this._handleManifestParsingError(
@@ -294,12 +294,13 @@ export default class PlaylistLoader {
         }
         levels.sort((a, b) => a.bitrate - b.bitrate);
         this._emitter.emit(LoaderEvent.MANIFEST_PARSED, {
+            type: 'masterPlaylist',
             levels,
             audioTracks,
             subtitles,
             url,
             stats,
-            networkDetails
+            networkDetails,
         });
     }
 
